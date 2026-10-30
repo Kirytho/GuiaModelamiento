@@ -138,7 +138,7 @@
           </ul>
         </div>
         <div class="diagram-container">
-          <img src="images/clases.png" alt="Diagrama de Clases UML - MediConnect" loading="lazy">
+          <img src="images/clases.png" alt="Diagrama de Clases UML - MediConnect" loading="lazy" onclick="openZoomModal('images/clases.png', 'Diagrama de Clases UML - MediConnect')" style="cursor:zoom-in">
         </div>
       </div>
     </article>
@@ -162,7 +162,7 @@
           </ul>
         </div>
         <div class="diagram-container">
-          <img src="images/componentes.png" alt="Diagrama de Componentes UML - MediConnect" loading="lazy">
+          <img src="images/componentes.png" alt="Diagrama de Componentes UML - MediConnect" loading="lazy" onclick="openZoomModal('images/componentes.png', 'Diagrama de Componentes UML - MediConnect')" style="cursor:zoom-in">
         </div>
       </div>
     </article>
@@ -186,7 +186,7 @@
           </ul>
         </div>
         <div class="diagram-container">
-          <img src="images/secuencia.png" alt="Diagrama de Secuencia UML - MediConnect" loading="lazy">
+          <img src="images/secuencia.png" alt="Diagrama de Secuencia UML - MediConnect" loading="lazy" onclick="openZoomModal('images/secuencia.png', 'Diagrama de Secuencia UML - MediConnect')" style="cursor:zoom-in">
         </div>
       </div>
     </article>
@@ -210,7 +210,7 @@
           </ul>
         </div>
         <div class="diagram-container">
-          <img src="images/despliegue.png" alt="Diagrama de Despliegue UML - MediConnect" loading="lazy">
+          <img src="images/despliegue.png" alt="Diagrama de Despliegue UML - MediConnect" loading="lazy" onclick="openZoomModal('images/despliegue.png', 'Diagrama de Despliegue UML - MediConnect')" style="cursor:zoom-in">
         </div>
       </div>
     </article>
@@ -232,7 +232,7 @@
           </ul>
         </div>
         <div class="diagram-container">
-          <img src="images/casos_uso.png" alt="Diagrama de Casos de Uso UML - MediConnect" loading="lazy">
+          <img src="images/casos_uso.png" alt="Diagrama de Casos de Uso UML - MediConnect" loading="lazy" onclick="openZoomModal('images/casos_uso.png', 'Diagrama de Casos de Uso UML - MediConnect')" style="cursor:zoom-in">
         </div>
       </div>
     </article>
@@ -250,6 +250,176 @@
     <div class="max-w-6xl mx-auto px-6 mt-6 text-xs text-slate-500">Diagramas generados con PlantUML. Archivos .puml disponibles en /documentacion/diagramas/</div>
   </footer>
 
-<script src="zoom.js"></script>
+
+<!-- Modal de Zoom -->
+<div id="zoom-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out;" onclick="closeZoomModal()">
+  <img id="zoom-modal-img" src="" alt="" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);transition:transform 0.2s ease;transform-origin:center center;">
+  <div style="position:fixed;top:1rem;right:1rem;display:flex;gap:0.5rem;z-index:100000;">
+    <button onclick="event.stopPropagation();zoomIn()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">+</button>
+    <button onclick="event.stopPropagation();zoomOut()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">−</button>
+    <button onclick="event.stopPropagation();resetZoom()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">⊙</button>
+    <button onclick="event.stopPropagation();closeZoomModal()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">✕</button>
+  </div>
+  <div id="zoom-level" style="position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:white;padding:0.5rem 1rem;border-radius:0.5rem;font-size:0.875rem;font-weight:600;backdrop-filter:blur(4px);">100%</div>
+</div>
+
+<script>
+var currentZoom = 1;
+var panOffset = {x:0, y:0};
+var lastPanOffset = {x:0, y:0};
+var isDragging = false;
+var dragStart = {x:0, y:0};
+
+function openZoomModal(src, alt) {
+  var modal = document.getElementById('zoom-modal');
+  var img = document.getElementById('zoom-modal-img');
+  img.src = src;
+  img.alt = alt || 'Diagrama UML ampliado';
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  currentZoom = 1;
+  panOffset = {x:0, y:0};
+  lastPanOffset = {x:0, y:0};
+  updateTransform();
+  document.getElementById('zoom-level').textContent = '100%';
+  return false;
+}
+
+function closeZoomModal() {
+  document.getElementById('zoom-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  currentZoom = 1;
+  panOffset = {x:0, y:0};
+  lastPanOffset = {x:0, y:0};
+  updateTransform();
+}
+
+function updateTransform() {
+  var img = document.getElementById('zoom-modal-img');
+  img.style.transform = 'scale(' + currentZoom + ') translate(' + (panOffset.x/currentZoom) + 'px, ' + (panOffset.y/currentZoom) + 'px)';
+  document.getElementById('zoom-level').textContent = Math.round(currentZoom*100) + '%';
+}
+
+function zoomIn() {
+  if (currentZoom < 5) {
+    currentZoom = Math.min(currentZoom + 0.25, 5);
+    updateTransform();
+  }
+}
+
+function zoomOut() {
+  if (currentZoom > 1) {
+    currentZoom = Math.max(currentZoom - 0.25, 1);
+    if (currentZoom === 1) {
+      panOffset = {x:0, y:0};
+      lastPanOffset = {x:0, y:0};
+    }
+    updateTransform();
+  }
+}
+
+function resetZoom() {
+  currentZoom = 1;
+  panOffset = {x:0, y:0};
+  lastPanOffset = {x:0, y:0};
+  updateTransform();
+}
+
+document.addEventListener('keydown', function(e) {
+  var modal = document.getElementById('zoom-modal');
+  if (modal.style.display !== 'flex') return;
+  switch(e.key) {
+    case 'Escape': closeZoomModal(); break;
+    case '+': case '=': zoomIn(); break;
+    case '-': zoomOut(); break;
+    case '0': resetZoom(); break;
+  }
+});
+
+// Drag pan
+var modalImg = document.getElementById('zoom-modal-img');
+modalImg.addEventListener('mousedown', function(e) {
+  if (currentZoom <= 1) return;
+  isDragging = true;
+  dragStart = {x: e.clientX, y: e.clientY};
+  modalImg.style.cursor = 'grabbing';
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', function(e) {
+  if (!isDragging) return;
+  var dx = e.clientX - dragStart.x;
+  var dy = e.clientY - dragStart.y;
+  panOffset = {x: lastPanOffset.x + dx, y: lastPanOffset.y + dy};
+  updateTransform();
+});
+
+document.addEventListener('mouseup', function() {
+  if (isDragging) {
+    isDragging = false;
+    lastPanOffset = {x: panOffset.x, y: panOffset.y};
+    modalImg.style.cursor = currentZoom > 1 ? 'grab' : 'default';
+  }
+});
+
+// Wheel zoom
+document.getElementById('zoom-modal').addEventListener('wheel', function(e) {
+  e.preventDefault();
+  if (e.deltaY < 0) zoomIn();
+  else zoomOut();
+}, {passive: false});
+
+// Touch events
+var touchStartDist = 0;
+var touchStartZoom = 1;
+var touchStartPan = {x:0, y:0};
+
+modalImg.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    var dx = e.touches[0].clientX - e.touches[1].clientX;
+    var dy = e.touches[0].clientY - e.touches[1].clientY;
+    touchStartDist = Math.sqrt(dx*dx + dy*dy);
+    touchStartZoom = currentZoom;
+  } else if (e.touches.length === 1 && currentZoom > 1) {
+    isDragging = true;
+    dragStart = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    touchStartPan = {x: lastPanOffset.x, y: lastPanOffset.y};
+  }
+}, {passive: false});
+
+modalImg.addEventListener('touchmove', function(e) {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    var dx = e.touches[0].clientX - e.touches[1].clientX;
+    var dy = e.touches[0].clientY - e.touches[1].clientY;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    currentZoom = Math.min(Math.max(touchStartZoom * (dist / touchStartDist), 1), 5);
+    updateTransform();
+  } else if (e.touches.length === 1 && isDragging) {
+    e.preventDefault();
+    var dx = e.touches[0].clientX - dragStart.x;
+    var dy = e.touches[0].clientY - dragStart.y;
+    panOffset = {x: touchStartPan.x + dx, y: touchStartPan.y + dy};
+    updateTransform();
+  }
+}, {passive: false});
+
+modalImg.addEventListener('touchend', function() {
+  if (currentZoom === 1) {
+    panOffset = {x:0, y:0};
+    lastPanOffset = {x:0, y:0};
+    updateTransform();
+  } else {
+    lastPanOffset = {x: panOffset.x, y: panOffset.y};
+  }
+  isDragging = false;
+});
+
+modalImg.addEventListener('dblclick', function(e) {
+  e.preventDefault();
+  resetZoom();
+});
+</script>
 </body>
 </html>
