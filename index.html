@@ -434,8 +434,8 @@ FIN-405ed
 
 <!-- Modal de Zoom -->
 <div id="zoom-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out;" onclick="closeZoomModal()">
-  <img id="zoom-modal-img" src="" alt="" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);transition:transform 0.2s ease;transform-origin:center center;">
-  <div style="position:fixed;top:1rem;right:1rem;display:flex;gap:0.5rem;z-index:100000;">
+  <img id="zoom-modal-img" src="" alt="" onclick="event.stopPropagation()" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);transition:transform 0.2s ease;transform-origin:center center;">
+  <div style="position:fixed;top:1rem;right:1rem;display:flex;gap:0.5rem;z-index:100000;" onclick="event.stopPropagation()">
     <button onclick="event.stopPropagation();zoomIn()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">+</button>
     <button onclick="event.stopPropagation();zoomOut()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">−</button>
     <button onclick="event.stopPropagation();resetZoom()" style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);font-size:1.25rem;font-weight:bold;cursor:pointer;backdrop-filter:blur(4px);">⊙</button>
