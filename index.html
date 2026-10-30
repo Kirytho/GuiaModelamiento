@@ -13,6 +13,85 @@ body{font-family:'Inter',system-ui,sans-serif;}
 .gradient-brand{background:linear-gradient(135deg,#0f766e 0%,#134e4a 100%);}
 .card-hover{transition:transform .15s ease,box-shadow .15s ease;}
 .card-hover:hover{transform:translateY(-3px);box-shadow:0 10px 25px -5px rgba(15,118,110,.15);}
+
+    .diagram-zoom-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .diagram-zoom-modal.active {
+      display: flex;
+    }
+    .diagram-zoom-backdrop {
+      position: absolute;
+      inset: 0;
+      cursor: zoom-out;
+    }
+    .diagram-zoom-content {
+      position: relative;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .diagram-zoom-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      transition: transform 0.15s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .diagram-zoom-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 2;
+    }
+    .zoom-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 1.25rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .zoom-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .diagram-zoom-info {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+    .diagram-container img {
+      cursor: zoom-in;
+    }
+    .bg-slate-50.rounded-2xl.p-4 img {
+      cursor: zoom-in;
+    }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 leading-relaxed">
@@ -184,49 +263,8 @@ body{font-family:'Inter',system-ui,sans-serif;}
             <li><strong>Cita</strong> genera <strong>Pago</strong> tras confirmación.</li>
           </ul>
         </div>
-        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
-          <pre class="mono text-sm leading-6 whitespace-pre-wrap">┌──────────────────────────────────────────────┐
-│              PACIENTE (Domain)               │
-├──────────────────────────────────────────────┤
-│ - pacienteId : UUID                          │
-│ - nombre : String                            │
-│ - email : String                             │
-│ - telefono : String                          │
-│ - fechaNacimiento : DateTime                 │
-├──────────────────────────────────────────────┤
-│ + reservarCita() : Cita                      │
-│ + pagarConsulta() : Pago                     │
-│ + consultarHistorial() : HistorialClínico    │
-└──────────────────────────────────────────────┘
-              │ 1
-              │ tiene muchos
-              ▼
-┌──────────────────────────────────────────────┐
-│                 CITA                         │
-├──────────────────────────────────────────────┤
-│ - citaId : UUID                              │
-│ - fechaHora : DateTime                       │
-│ - estado : Enum {PENDIENTE,CONFIRMADA,CANCELADA}
-│ - pacienteId : UUID                          │
-│ - medicoId : UUID                            │
-├──────────────────────────────────────────────┤
-│ + confirmar() : void                         │
-│ + cancelar() : void                          │
-└──────────────────────────────────────────────┘
-              │ 1
-              │ genera
-              ▼
-┌──────────────────────────────────────────────┐
-│                 PAGO                         │
-├──────────────────────────────────────────────┤
-│ - pagoId : UUID                              │
-│ - monto : Decimal                            │
-│ - estado : Enum {PENDIENTE,COMPLETADO}       │
-│ - transaccionRef : String                    │
-├──────────────────────────────────────────────┤
-│ + procesar() : void                          │
-│ + emitirComprobante() : Documento            │
-└──────────────────────────────────────────────┘</pre>
+        <div class="bg-slate-50 rounded-2xl p-4 overflow-x-auto">
+          <img src="images/clases.svg" alt="Diagrama de Clases UML - MediConnect" class="w-full h-auto rounded-xl" loading="lazy">
         </div>
       </div>
     </article>
@@ -249,27 +287,8 @@ body{font-family:'Inter',system-ui,sans-serif;}
             <li>Teleconsult Module: videoconferencia.</li>
           </ul>
         </div>
-        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
-          <pre class="mono text-sm leading-6 whitespace-pre-wrap">┌──────────────────────────────────────────────┐
-│            API GATEWAY (NGINX)               │
-│  /api/v1/pacientes | /api/v1/medicos          │
-│  /api/v1/citas     | /api/v1/pagos           │
-│  /api/v1/teleconsultas                       │
-└──────────────────────────────────────────────┘
-           │
-     ┌─────┼─────┬─────┐
-     ▼     ▼     ▼     ▼
-┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
-│ AUTH   │ │PATIENT │ │MEDICAL │ │BILLING │
-│(Docker)│ │(Docker)│ │(Docker)│ │(Docker)│
-│JWT,OAu2│ │Cita Mgmt│ │Historial│ │Payme   │
-└────────┘ └────────┘ └────────┘ └────────┘
-           │
-           ▼
-┌──────────────────────────────────────────────┐
-│         TELECONSULT MODULE (Docker)          │
-│  WebRTC / SFU | Graba sesiones               │
-└──────────────────────────────────────────────┘</pre>
+        <div class="bg-slate-50 rounded-2xl p-4 overflow-x-auto">
+          <img src="images/componentes.svg" alt="Diagrama de Componentes UML - MediConnect" class="w-full h-auto rounded-xl" loading="lazy">
         </div>
       </div>
     </article>
@@ -285,27 +304,8 @@ body{font-family:'Inter',system-ui,sans-serif;}
           <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
           <p class="text-slate-600 mb-4">El flujo cubre RF1 (reserva de cita) y RF4 (pago). El paciente interactúa con API Gateway, que delega al Patient Service. La confirmación dispara la creación de un registro de pago que se envía al Billing Module y luego a la pasarela externa. Todo se registra con trazabilidad.</p>
         </div>
-        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
-          <pre class="mono text-sm leading-6 whitespace-pre-wrap">Paciente ──► API Gateway ──► Patient Service
-   │              │                │
-   │  Buscar     │                │
-   │─────────────▶│                │
-   │              │ Buscar Médico │
-   │              │──────────────▶│
-   │              │◀──────────────│ Filtra Disp.
-   │  Reserva    │                │
-   │─────────────▶│────────────────▶│
-   │              │ Guardar Cita  │
-   │              │                │ Crear Pago
-   │              │                │────────────▶ Billing
-   │              │                │               │
-   │              │                │               │ POST /tx
-   │              │                │               │────────────▶ Pasarela
-   │              │                │               │             │
-   │              │                │               │ Procesar   │
-   │              │                │◀──────────────│◀────────────│
-   │              │                │  Respuesta    │             │
-   │  Confirmado │◀───────────────│◀───────────────│             │</pre>
+        <div class="bg-slate-50 rounded-2xl p-4 overflow-x-auto">
+          <img src="images/secuencia.svg" alt="Diagrama de Secuencia UML - MediConnect" class="w-full h-auto rounded-xl" loading="lazy">
         </div>
       </div>
     </article>
@@ -326,27 +326,8 @@ body{font-family:'Inter',system-ui,sans-serif;}
             <li>Redis para sesiones y rate limiting.</li>
           </ul>
         </div>
-        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
-          <pre class="mono text-sm leading-6 whitespace-pre-wrap">Internet ──► Cloudflare CDN ──► Load Balancer (NGINX)
-                                        │
-                                Round-robin + Sticky JWT
-                                        ▼
-                         ┌─────────┬─────────┬─────────┐
-                         │  Srv1  │  Srv2  │  Snk  │
-                         │ Active │ Active │ Standby│
-                         └─────────┴─────────┴─────────┘
-                                        │
-                                        ▼
-                         ┌──────────────────────────────┐
-                         │      DATABASE LAYER           │
-                         │                              │
-                         │ PostgreSQL Primary (Master)   │
-                         │      │                       │
-                         │      ▼                       │
-                         │ Réplica ASYNC                 │
-                         │ Redis Cache (Sessions)        │
-                         │ S3 Storage (Recetas / PDF)    │
-                         └──────────────────────────────┘</pre>
+        <div class="bg-slate-50 rounded-2xl p-4 overflow-x-auto">
+          <img src="images/despliegue.svg" alt="Diagrama de Despliegue UML - MediConnect" class="w-full h-auto rounded-xl" loading="lazy">
         </div>
       </div>
     </article>
@@ -362,17 +343,8 @@ body{font-family:'Inter',system-ui,sans-serif;}
           <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
           <p class="text-slate-600 mb-4">Los escenarios conectan todas las vistas en flujos reales. Un paciente reserva (Vista Lógica + Proceso), el sistema confirma disponibilidad (Desarrollo), despliega el servicio (Física) y el usuario percibe una experiencia coherente (Escenario).</p>
         </div>
-        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
-          <pre class="mono text-sm leading-6 whitespace-pre-wrap">Escenario: Paciente reserva cita with medico Dr. González
-
-Participantes:
-  Paciente        ──►  Busca por especialidad (Cardiología)
-  API Gateway     ──►  Rutas a Patient Service
-  Patient Service ──►  Consulta disponibilidad
-  Médico          ──►  Confirma agenda
-  Cita (Domain)   ──►  Creada, estado = CONFIRMADA
-  Billing         ──►  Genera pago pendiente
-  Paciente        ◀──  Confirmación + Comprobante</pre>
+        <div class="bg-slate-50 rounded-2xl p-4 overflow-x-auto">
+          <img src="images/casos_uso.svg" alt="Diagrama de Casos de Uso UML - MediConnect" class="w-full h-auto rounded-xl" loading="lazy">
         </div>
       </div>
     </article>
@@ -459,5 +431,7 @@ REQUISITOS: S1
 PENDIENTES:
 FIN-405ed
 
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script src="zoom.js"></script>
 </body>
 </html>

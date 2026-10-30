@@ -1,175 +1,256 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vistas 4+1 - MediConnect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .card-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-        }
-        .diagram-container {
-            background: #f8fafc;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            overflow-x: auto;
-        }
-        .diagram-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vistas 4+1 — MediConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body{font-family:'Inter',system-ui,sans-serif;}
+    .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+    .card-hover{transition:transform .15s ease,box-shadow .15s ease;}
+    .card-hover:hover{transform:translateY(-3px);box-shadow:0 10px 25px -5px rgba(15,118,110,.15);}
+    .diagram-container{background:#f8fafc;border-radius:.75rem;padding:1rem;overflow-x:auto;}
+    .diagram-container img{max-width:100%;height:auto;display:block;margin:0 auto;}
+  
+    .diagram-zoom-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .diagram-zoom-modal.active {
+      display: flex;
+    }
+    .diagram-zoom-backdrop {
+      position: absolute;
+      inset: 0;
+      cursor: zoom-out;
+    }
+    .diagram-zoom-content {
+      position: relative;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .diagram-zoom-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      transition: transform 0.15s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .diagram-zoom-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 2;
+    }
+    .zoom-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 1.25rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .zoom-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .diagram-zoom-info {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+    .diagram-container img {
+      cursor: zoom-in;
+    }
+    .bg-slate-50.rounded-2xl.p-4 img {
+      cursor: zoom-in;
+    }
+</style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-    <!-- Header -->
-    <header class="gradient-bg text-white py-8">
-        <div class="container mx-auto px-6 flex justify-between items-center">
-            <h1 class="text-3xl font-bold">MediConnect</h1>
-            <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold hover:scale-105 transition">
-                <i class="fas fa-arrow-left mr-2"></i>Volver al Inicio
-            </a>
+<body class="bg-slate-50 text-slate-800 leading-relaxed">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="font-extrabold text-xl tracking-tight text-teal-800">MediConnect <span class="text-teal-500 text-base font-semibold">4+1</span></a>
+      <div class="hidden md:flex gap-6 text-sm font-semibold text-slate-600">
+        <a href="index.html#inicio" class="hover:text-teal-700">Inicio</a>
+        <a href="index.html#requerimientos" class="hover:text-teal-700">Requerimientos</a>
+        <a href="index.html#vistas" class="hover:text-teal-700">Vistas 4+1</a>
+        <a href="index.html#conclusiones" class="hover:text-teal-700">Conclusiones</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="bg-gradient-to-br from-teal-700 to-teal-900 text-white py-16">
+    <div class="max-w-6xl mx-auto px-6">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Vistas 4+1 del Paradigma</h1>
+      <p class="text-teal-100 text-lg max-w-3xl">Cada vista del paradigma de Kruchten con sus diagramas UML generados con PlantUML e interpretaciones técnicas orientadas a los requerimientos de MediConnect.</p>
+    </div>
+  </section>
+
+  <main class="max-w-6xl mx-auto px-6 py-16 space-y-16">
+
+    <!-- Vista Lógica -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA LÓGICA</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Clases — Modelo de Dominio</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h3 class="font-bold text-slate-800 mb-3">Interpretación técnica</h3>
+          <p class="text-slate-600 mb-4">El núcleo del sistema se modela con clases de dominio puras: <strong>Paciente</strong>, <strong>Médico</strong>, <strong>Cita</strong>, <strong>HistorialClínico</strong>, <strong>Receta</strong>, <strong>Pago</strong>. Cada entidad define atributos tipados y métodos de negocio, manteniendo independencia de infraestructura (Arquitectura Hexagonal).</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li><strong>Paciente</strong> tiene muchas <strong>Cita</strong> (1:N).</li>
+            <li><strong>Médico</strong> emite <strong>Receta</strong> y actualiza <strong>HistorialClínico</strong>.</li>
+            <li><strong>Cita</strong> genera <strong>Pago</strong> tras confirmación.</li>
+            <li>Herencia: <strong>Usuario</strong> → <strong>Paciente</strong>, <strong>Médico</strong>.</li>
+          </ul>
         </div>
-    </header>
-
-    <section class="py-20">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center mb-12">Vistas 4+1 del Paradigma de Kruchten</h2>
-            
-            <div class="grid md:grid-cols-6 gap-4 mb-16">
-                <div class="text-center p-4 bg-red-100 rounded-xl shadow">
-                    <i class="fas fa-bullseye text-2xl text-red-600 mb-2"></i>
-                    <h4 class="font-bold">Toma Requerimientos</h4>
-                </div>
-                <div class="text-center p-4 bg-blue-100 rounded-xl shadow">
-                    <i class="fas fa-sitemap text-2xl text-blue-600 mb-2"></i>
-                    <h4 class="font-bold">Vista Lógica</h4>
-                </div>
-                <div class="text-center p-4 bg-green-100 rounded-xl shadow">
-                    <i class="fas fa-layer-group text-2xl text-green-600 mb-2"></i>
-                    <h4 class="font-bold">Vista Desarrollo</h4>
-                </div>
-                <div class="text-center p-4 bg-yellow-100 rounded-xl shadow">
-                    <i class="fas fa-sync-alt text-2xl text-yellow-600 mb-2"></i>
-                    <h4 class="font-bold">Vista Procesos</h4>
-                </div>
-                <div class="text-center p-4 bg-purple-100 rounded-xl shadow">
-                    <i class="fas fa-server text-2xl text-purple-600 mb-2"></i>
-                    <h4 class="font-bold">Vista Física</h4>
-                </div>
-                <div class="text-center p-4 bg-orange-100 rounded-xl shadow">
-                    <i class="fas fa-user-friends text-2xl text-orange-600 mb-2"></i>
-                    <h4 class="font-bold">+ Vista Escenarios</h4>
-                </div>
-            </div>
-
-            <!-- Vista Lógica -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 text-blue-600 flex items-center">
-                    <i class="fas fa-sitemap mr-3"></i>Vista Lógica - Diagrama de Clases
-                </h3>
-                <div class="card-shadow bg-white rounded-xl p-6">
-                    <p class="text-gray-700 mb-4">
-                        Estructura de dominio que modela el núcleo del sistema. Define las entidades, atributos, 
-                        métodos y relaciones entre objetos. Generado con PlantUML.
-                    </p>
-                    <div class="diagram-container">
-                        <img src="images/clases.png" alt="Diagrama de Clases UML - MediConnect" loading="lazy">
-                    </div>
-                    <p class="text-sm text-gray-500 mt-4 text-center">
-                        Clases: Usuario, Paciente, Medico, Especialidad, Cita, HistorialClinico, Diagnostico, Receta, MedicamentoRecetado, Pago
-                    </p>
-                </div>
-            </div>
-
-            <!-- Vista de Desarrollo -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 text-green-600 flex items-center">
-                    <i class="fas fa-layer-group mr-3"></i>Vista de Desarrollo - Diagrama de Componentes
-                </h3>
-                <div class="card-shadow bg-white rounded-xl p-6">
-                    <p class="text-gray-700 mb-4">
-                        Organización modular del código fuente. Agrupa componentes, subsistemas y sus dependencias. 
-                        Arquitectura basada en microservicios. Generado con PlantUML.
-                    </p>
-                    <div class="diagram-container">
-                        <img src="images/componentes.png" alt="Diagrama de Componentes UML - MediConnect" loading="lazy">
-                    </div>
-                    <p class="text-sm text-gray-500 mt-4 text-center">
-                        Componentes: API Gateway, Auth Service, Patient Service, Medical Service, Billing Module, Teleconsultation Module, Frontend, Database, External Integrations
-                    </p>
-                </div>
-            </div>
-
-            <!-- Vista de Procesos -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 text-yellow-600 flex items-center">
-                    <i class="fas fa-sync-alt mr-3"></i>Vista de Procesos - Diagrama de Secuencia
-                </h3>
-                <div class="card-shadow bg-white rounded-xl p-6">
-                    <p class="text-gray-700 mb-4">
-                        Flujos dinámicos que ilustran el comportamiento del sistema. Muestra intercambios de mensajes, 
-                        concurrencia y pasos temporales. Proceso de Reserva y Pago de Consulta. Generado con PlantUML.
-                    </p>
-                    <div class="diagram-container">
-                        <img src="images/secuencia.png" alt="Diagrama de Secuencia UML - MediConnect" loading="lazy">
-                    </div>
-                    <p class="text-sm text-gray-500 mt-4 text-center">
-                        Flujo: Paciente → API Gateway → Patient Service → Booking Service → Billing Module → Pasarela de Pago → Médico
-                    </p>
-                </div>
-            </div>
-
-            <!-- Vista Física -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 text-purple-600 flex items-center">
-                    <i class="fas fa-server mr-3"></i>Vista Física - Diagrama de Despliegue
-                </h3>
-                <div class="card-shadow bg-white rounded-xl p-6">
-                    <p class="text-gray-700 mb-4">
-                        Topología física de infraestructura. Muestra servidores, redes, nodos de base de datos, 
-                        y conexiones seguras. Despliegue Cloud-Native. Generado con PlantUML.
-                    </p>
-                    <div class="diagram-container">
-                        <img src="images/despliegue.png" alt="Diagrama de Despliegue UML - MediConnect" loading="lazy">
-                    </div>
-                    <p class="text-sm text-gray-500 mt-4 text-center">
-                        Infraestructura: Cloudflare CDN, NGINX Load Balancer, 3 Web Servers, PostgreSQL Cluster, Redis Cache, MinIO Storage, External Services, Monitoring
-                    </p>
-                </div>
-            </div>
-
-            <!-- Vista de Escenarios -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 text-orange-600 flex items-center">
-                    <i class="fas fa-user-friends mr-3"></i>Vista de Escenarios - Casos de Uso
-                </h3>
-                <div class="card-shadow bg-white rounded-xl p-6">
-                    <p class="text-gray-700 mb-4">
-                        Validación global de la arquitectura mediante casos de uso reales. Actores: Paciente, Médico, 
-                        Sistema de Pago. Generado con PlantUML.
-                    </p>
-                    <div class="diagram-container">
-                        <img src="images/casos_uso.png" alt="Diagrama de Casos de Uso UML - MediConnect" loading="lazy">
-                    </div>
-                    <p class="text-sm text-gray-500 mt-4 text-center">
-                        21 casos de uso: 9 para Paciente, 8 para Médico, 4 para Sistema de Pago
-                    </p>
-                </div>
-            </div>
+        <div class="diagram-container">
+          <img src="images/clases.svg" alt="Diagrama de Clases UML - MediConnect" loading="lazy">
         </div>
-    </section>
+      </div>
+    </article>
 
-    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-6">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-gray-400">&copy; 2026 MediConnect - Arquitectura 4+1 UML</p>
+    <!-- Vista de Desarrollo -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA DESARROLLO</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Componentes — Modularidad</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h3 class="font-bold text-slate-800 mb-3">Interpretación técnica</h3>
+          <p class="text-slate-600 mb-4">El código se organiza en componentes contenerizados. <strong>API Gateway</strong> expone endpoints REST y enruta a servicios internos. Cada dominio opera como servicio independiente con su propia base, permitiendo despliegue independiente.</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li>Auth Service: JWT / OAuth2.</li>
+            <li>Patient Service: citas y disponibilidad.</li>
+            <li>Medical Service: historiales y recetas.</li>
+            <li>Billing Module: pasarela de pagos.</li>
+            <li>Teleconsult Module: videoconferencia WebRTC.</li>
+          </ul>
         </div>
-    </footer>
+        <div class="diagram-container">
+          <img src="images/componentes.svg" alt="Diagrama de Componentes UML - MediConnect" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista de Procesos -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA PROCESOS</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Secuencia — Reserva y Pago</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h3 class="font-bold text-slate-800 mb-3">Interpretación técnica</h3>
+          <p class="text-slate-600 mb-4">El flujo cubre RF1 (reserva de cita) y RF4 (pago). El paciente interactúa con API Gateway, que delega al Patient Service. La confirmación dispara la creación de un registro de pago que se envía al Billing Module y luego a la pasarela externa. Todo se registra con trazabilidad.</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li>Paciente busca profesional por especialidad.</li>
+            <li>Filtra por disponibilidad horaria.</li>
+            <li>Confirma reserva → genera cita PENDIENTE.</li>
+            <li>Procesa pago → cita CONFIRMADA.</li>
+            <li>Notificación al médico + comprobante al paciente.</li>
+          </ul>
+        </div>
+        <div class="diagram-container">
+          <img src="images/secuencia.svg" alt="Diagrama de Secuencia UML - MediConnect" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista Física -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA FÍSICA</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Despliegue — Topología</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h3 class="font-bold text-slate-800 mb-3">Interpretación técnica</h3>
+          <p class="text-slate-600 mb-4">La infraestructura es cloud-native. <strong>Cloudflare CDN</strong> protege y acelera el tráfico. Un load balancer <strong>NGINX</strong> distribuye a servidores activos con sticky JWT. La base de datos PostgreSQL opera con réplica asíncrona y Redis gestiona sesiones y caché. Archivos médicos se almacenan en S3.</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li>Cloudflare CDN para edge caching.</li>
+            <li>NGINX Load Balancer con TLS 1.3.</li>
+            <li>3 Web Servers (2 activos + 1 standby).</li>
+            <li>PostgreSQL Primary + Réplica ASYNC.</li>
+            <li>Redis Cache + MinIO Storage.</li>
+          </ul>
+        </div>
+        <div class="diagram-container">
+          <img src="images/despliegue.svg" alt="Diagrama de Despliegue UML - MediConnect" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista de Escenarios -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA ESCENARIOS</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">Casos de Uso — Escenarios Clave</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h3 class="font-bold text-slate-800 mb-3">Interpretación técnica</h3>
+          <p class="text-slate-600 mb-4">Los escenarios conectan todas las vistas en flujos reales. Un paciente reserva (Vista Lógica + Proceso), el sistema confirma disponibilidad (Desarrollo), despliega el servicio (Física) y el usuario percibe una experiencia coherente (Escenario).</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li>21 casos de uso identificados.</li>
+            <li>9 para Paciente, 8 para Médico, 4 para Sistema de Pago.</li>
+            <li>Relaciones: include, extend, generalización.</li>
+          </ul>
+        </div>
+        <div class="diagram-container">
+          <img src="images/casos_uso.svg" alt="Diagrama de Casos de Uso UML - MediConnect" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-300 py-10 mt-16">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div>
+        <h4 class="font-extrabold text-white text-lg">MediConnect — 4+1 UML</h4>
+        <p class="text-sm text-slate-400">Documentación pública estática. HTML5 + Tailwind CSS (CDN). Sin backend.</p>
+      </div>
+      <a href="https://github.com/Kirytho/GuiaModelamiento" target="_blank" rel="noopener noreferrer" class="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2.5 rounded-full font-bold shadow transition">Ver repositorio en GitHub</a>
+    </div>
+    <div class="max-w-6xl mx-auto px-6 mt-6 text-xs text-slate-500">Diagramas generados con PlantUML. Archivos .puml disponibles en /documentacion/diagramas/</div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script src="zoom.js"></script>
 </body>
 </html>
