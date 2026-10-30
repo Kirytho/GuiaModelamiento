@@ -1,62 +1,23 @@
 /**
  * Zoom interactivo para diagramas UML
- * Usa medium-zoom (externo) como método principal
- * Fallback: vanilla JS si medium-zoom no carga
+ * Vanilla JS puro - sin dependencias externas
  */
 (function() {
   'use strict';
 
-  console.log('Inicializando zoom de diagramas...');
+  console.log('[Zoom] Iniciando...');
 
   // Esperar a que el DOM esté listo
   function onReady(callback) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', callback);
     } else {
-      callback();
+      setTimeout(callback, 100);
     }
   }
 
-  // Inicializar con medium-zoom
-  function initMediumZoom() {
-    if (!window.mediumZoom) {
-      console.warn('medium-zoom no disponible, usando fallback');
-      initFallback();
-      return;
-    }
-
-    console.log('Usando medium-zoom');
-
-    // Seleccionar todas las imágenes de diagramas
-    const images = document.querySelectorAll(
-      '.diagram-container img, .bg-slate-50.rounded-2xl.p-4 img, img[src*="images/"]'
-    );
-
-    console.log('Imágenes encontradas:', images.length);
-
-    if (images.length === 0) {
-      console.warn('No se encontraron imágenes de diagramas');
-      return;
-    }
-
-    // Inicializar medium-zoom
-    const zoom = mediumZoom(images, {
-      margin: 24,
-      background: 'rgba(0, 0, 0, 0.9)',
-      scrollOffset: 0
-    });
-
-    // Agregar cursor zoom-in
-    images.forEach(function(img) {
-      img.style.cursor = 'zoom-in';
-    });
-
-    console.log('medium-zoom inicializado correctamente');
-  }
-
-  // Fallback: vanilla JS
-  function initFallback() {
-    console.log('Inicializando fallback de zoom');
+  onReady(function() {
+    console.log('[Zoom] DOM listo');
 
     // Agregar estilos del modal
     const style = document.createElement('style');
@@ -80,6 +41,8 @@
         transform-origin: center center;
         border-radius: 8px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        user-select: none;
+        -webkit-user-drag: none;
       }
       .diagram-modal-overlay img.zoomed { transform: scale(2); cursor: grab; }
       .diagram-modal-overlay img.grabbing { cursor: grabbing; }
@@ -159,6 +122,7 @@
     let lastPanOffset = { x: 0, y: 0 };
 
     function openModal(src, alt) {
+      console.log('[Zoom] Abriendo modal:', src);
       modalImg.src = src;
       modalImg.alt = alt || 'Diagrama UML ampliado';
       modal.classList.add('active');
@@ -171,6 +135,7 @@
     }
 
     function closeModal() {
+      console.log('[Zoom] Cerrando modal');
       modal.classList.remove('active');
       document.body.style.overflow = '';
     }
@@ -205,11 +170,36 @@
       updateTransform();
     }
 
-    backdrop.addEventListener('click', closeModal);
-    document.getElementById('zoom-close-btn').addEventListener('click', closeModal);
-    document.getElementById('zoom-in-btn').addEventListener('click', zoomIn);
-    document.getElementById('zoom-out-btn').addEventListener('click', zoomOut);
-    document.getElementById('zoom-reset-btn').addEventListener('click', resetZoom);
+    // Event listeners
+    backdrop.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    });
+
+    document.getElementById('zoom-close-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    });
+
+    document.getElementById('zoom-in-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zoomIn();
+    });
+
+    document.getElementById('zoom-out-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zoomOut();
+    });
+
+    document.getElementById('zoom-reset-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      resetZoom();
+    });
 
     modal.addEventListener('wheel', function(e) {
       e.preventDefault();
@@ -222,6 +212,7 @@
       isDragging = true;
       dragStart = { x: e.clientX, y: e.clientY };
       modalImg.classList.add('grabbing');
+      e.preventDefault();
     });
 
     document.addEventListener('mousemove', function(e) {
@@ -240,7 +231,10 @@
       }
     });
 
-    modalImg.addEventListener('dblclick', resetZoom);
+    modalImg.addEventListener('dblclick', function(e) {
+      e.preventDefault();
+      resetZoom();
+    });
 
     document.addEventListener('keydown', function(e) {
       if (!modal.classList.contains('active')) return;
@@ -316,48 +310,29 @@
           img.classList.add('diagram-zoomable');
           count++;
 
-          const container = img.parentElement;
-          if (container && !container.querySelector('.diagram-zoom-hint')) {
-            const hint = document.createElement('div');
-            hint.className = 'diagram-zoom-hint';
-            hint.textContent = '🔍 Clic para ampliar';
-            container.style.position = 'relative';
-            container.appendChild(hint);
-          }
+          // Prevenir navegación por defecto
+          img.style.cursor = 'zoom-in';
 
           img.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('[Zoom] Click en:', img.src);
             openModal(img.src, img.alt);
+            return false;
           });
         });
       });
-      console.log('Click handlers adjuntados a', count, 'imágenes');
+      console.log('[Zoom] Click handlers adjuntados a', count, 'imágenes');
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', attachClickHandlers);
-    } else {
-      attachClickHandlers();
-    }
-    setTimeout(attachClickHandlers, 500);
-  }
+    // Ejecutar inmediatamente y con delay
+    attachClickHandlers();
+    setTimeout(attachClickHandlers, 300);
+    setTimeout(attachClickHandlers, 1000);
 
-  // Ejecutar
-  onReady(function() {
-    // Intentar cargar medium-zoom
-    if (window.mediumZoom) {
-      initMediumZoom();
-    } else {
-      // Esperar un poco por si el script de medium-zoom se carga
-      setTimeout(function() {
-        if (window.mediumZoom) {
-          initMediumZoom();
-        } else {
-          initFallback();
-        }
-      }, 300);
-    }
+    console.log('[Zoom] Inicializado correctamente');
   });
 
 })();
+HTMLEOF
+echo "zoom.js reescrito (vanilla JS puro)"
