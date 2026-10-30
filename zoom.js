@@ -316,7 +316,7 @@
           img.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log('[Zoom] Click en:', img.src);
+            alert('Click detectado en: ' + img.src); console.log('[Zoom] Click en:', img.src);
             openModal(img.src, img.alt);
             return false;
           });
