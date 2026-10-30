@@ -5,7 +5,7 @@
 (function() {
   'use strict';
 
-  console.log('[Zoom] Iniciando...');
+  console.log('[Zoom] Iniciando...'); alert('Zoom script loaded');
 
   // Esperar a que el DOM esté listo
   function onReady(callback) {
