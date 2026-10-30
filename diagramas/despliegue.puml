@@ -1,0 +1,86 @@
+@startuml
+skinparam nodeBackgroundColor #f0f9ff
+skinparam nodeBorderColor #0369a1
+skinparam componentBackgroundColor #e0f2fe
+skinparam componentBorderColor #0284c7
+
+title Diagrama de Despliegue - MediConnect
+
+node "Internet" as internet
+
+node "Cloudflare CDN" as cdn {
+  [Edge POPs]
+}
+
+node "Load Balancer" as lb {
+  [NGINX]
+}
+
+node "Web Server 1" as ws1 {
+  [Node.js App 1]
+}
+
+node "Web Server 2" as ws2 {
+  [Node.js App 2]
+}
+
+node "Web Server N" as wsn {
+  [Node.js App N]
+}
+
+node "Database Cluster" as db {
+  [PostgreSQL Primary]
+  [PostgreSQL Replica]
+  [Redis Cache]
+  [MinIO Storage]
+}
+
+node "External Services" as ext {
+  [Stripe API]
+  [HCN API]
+  [Twilio]
+}
+
+node "Monitoring" as mon {
+  [Prometheus]
+  [Grafana]
+  [ELK Stack]
+}
+
+internet --> cdn : HTTPS/TLS 1.3
+cdn --> lb : HTTPS
+lb --> ws1 : HTTP
+lb --> ws2 : HTTP
+lb --> wsn : HTTP
+ws1 --> db : SQL/TCP
+ws2 --> db : SQL/TCP
+wsn --> db : SQL/TCP
+ws1 --> ext : HTTPS/REST
+ws2 --> ext : HTTPS/REST
+wsn --> ext : HTTPS/REST
+ws1 --> mon : Metrics
+ws2 --> mon : Metrics
+wsn --> mon : Metrics
+
+note right of lb
+  NGINX Load Balancer
+  Round-robin + Sticky Sessions
+  TLS 1.3 termination
+  Health checks cada 30s
+end note
+
+note right of db
+  PostgreSQL Primary (Master)
+  PostgreSQL Replica (Async)
+  Redis Cache (Sessions)
+  MinIO S3 (Files)
+  AES-256 en reposo
+end note
+
+note right of ext
+  Stripe (Pagos)
+  HCN (Historial Nacional)
+  Twilio (Notificaciones)
+end note
+
+@enduml

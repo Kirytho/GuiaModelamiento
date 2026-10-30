@@ -1,0 +1,128 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam classBackgroundColor #f0f9ff
+skinparam classBorderColor #0369a1
+skinparam classArrowColor #0369a1
+
+title Diagrama de Clases - MediConnect
+
+class Usuario {
+  - usuarioId: UUID
+  - email: String
+  - passwordHash: String
+  - rol: Enum
+  - estaActivo: Boolean
+  + autenticar(): Token
+  + recuperarContrasena(): void
+}
+
+class Paciente {
+  - pacienteId: UUID
+  - nombre: String
+  - apellido: String
+  - email: String
+  - telefono: String
+  - dni: String
+  - fechaNacimiento: DateTime
+  + registrar(): void
+  + actualizarPerfiles(): void
+  + obtenerHistorial(): HistorialClinico
+  + reservarCita(): Cita
+  + pagarConsulta(): Pago
+}
+
+class Medico {
+  - medicoId: UUID
+  - usuarioId: UUID
+  - numeroMatricula: String
+  - especialidadId: UUID
+  - tarifaConsulta: Decimal
+  + registrarDiagnostico(): Diagnostico
+  + emitirReceta(): Receta
+  + iniciarVideoconferencia(): Sala
+  + actualizarDisponibilidad(): void
+}
+
+class Especialidad {
+  - especialidadId: UUID
+  - nombre: String
+  - codigo: String
+  - descripcion: String
+}
+
+class Cita {
+  - citaId: UUID
+  - pacienteId: UUID
+  - medicoId: UUID
+  - fechaHora: DateTime
+  - estado: Enum
+  - tipo: Enum
+  - pagoId: UUID
+  + confirmar(): void
+  + cancelar(): void
+  + completar(): void
+}
+
+class HistorialClinico {
+  - historialId: UUID
+  - pacienteId: UUID
+  - medicoId: UUID
+  - diagnosticos: List<Diagnostico>
+  - recetas: List<Receta>
+  + agregarDiagnostico(): void
+  + agregarReceta(): void
+}
+
+class Diagnostico {
+  - diagnosticoId: UUID
+  - codigoCIE10: String
+  - descripcion: String
+  - tipo: Enum
+  - fechaRegistro: DateTime
+  - observaciones: String
+}
+
+class Receta {
+  - recetaId: UUID
+  - fechaEmision: DateTime
+  - fechaVencimiento: DateTime
+  - estado: Enum
+  - medicamentos: List<MedicamentoRecetado>
+  + generarCodigoQR(): String
+}
+
+class MedicamentoRecetado {
+  - medicamentoId: UUID
+  - nombre: String
+  - dosis: String
+  - frecuencia: String
+  - duracion: Integer
+}
+
+class Pago {
+  - pagoId: UUID
+  - citaId: UUID
+  - monto: Decimal
+  - moneda: String
+  - metodo: Enum
+  - estado: Enum
+  - numeroTransaccion: String
+  + procesar(): Pago
+  + emitirComprobante(): Comprobante
+}
+
+Usuario <|-- Paciente
+Usuario <|-- Medico
+Paciente "1" --> "1..*" HistorialClinico : tiene
+Medico "1" --> "1..*" Cita : atiende
+Paciente "1" --> "1..*" Cita : reserva
+Cita "1" --> "0..1" Pago : genera
+Medico "1" --> "1..*" Receta : emite
+Paciente "1" --> "1..*" Receta : recibe
+HistorialClinico "1" --> "1..*" Diagnostico : contiene
+HistorialClinico "1" --> "1..*" Receta : contiene
+Receta "1" --> "1..*" MedicamentoRecetado : contiene
+Medico "1" --> "1" Especialidad : tiene
+
+@enduml

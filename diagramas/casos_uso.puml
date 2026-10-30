@@ -1,0 +1,69 @@
+@startuml
+skinparam usecaseBackgroundColor #f0f9ff
+skinparam usecaseBorderColor #0369a1
+skinparam actorBackgroundColor #e0f2fe
+skinparam actorBorderColor #0284c7
+
+title Diagrama de Casos de Uso - MediConnect
+
+left to right direction
+
+actor "Paciente" as Paciente
+actor "Médico" as Medico
+actor "Sistema de Pago" as Pago
+
+rectangle "MediConnect" {
+  usecase "UC1.1: Registrarse/Autenticarse" as UC1
+  usecase "UC1.2: Buscar profesional" as UC2
+  usecase "UC1.3: Consultar disponibilidad" as UC3
+  usecase "UC1.4: Reservar cita" as UC4
+  usecase "UC1.5: Confirmar reserva" as UC5
+  usecase "UC1.6: Ver historial clínico" as UC6
+  usecase "UC1.7: Recibir receta digital" as UC7
+  usecase "UC1.8: Pagar consulta" as UC8
+  usecase "UC1.9: Recibir comprobante" as UC9
+  
+  usecase "UC2.1: Iniciar sesión" as UC10
+  usecase "UC2.2: Consultar pacientes" as UC11
+  usecase "UC2.3: Ver historial clínico" as UC12
+  usecase "UC2.4: Registrar diagnóstico" as UC13
+  usecase "UC2.5: Emitir receta digital" as UC14
+  usecase "UC2.6: Iniciar videoconferencia" as UC15
+  usecase "UC2.7: Finalizar consulta" as UC16
+  usecase "UC2.8: Generar factura" as UC17
+  
+  usecase "UC3.1: Recibir solicitud de pago" as UC18
+  usecase "UC3.2: Procesar transacción" as UC19
+  usecase "UC3.3: Enviar confirmación" as UC20
+  usecase "UC3.4: Emitir comprobante" as UC21
+}
+
+Paciente --> UC1
+Paciente --> UC2
+Paciente --> UC3
+Paciente --> UC4
+Paciente --> UC5
+Paciente --> UC6
+Paciente --> UC7
+Paciente --> UC8
+Paciente --> UC9
+
+Medico --> UC10
+Medico --> UC11
+Medico --> UC12
+Medico --> UC13
+Medico --> UC14
+Medico --> UC15
+Medico --> UC16
+Medico --> UC17
+
+Pago --> UC18
+Pago --> UC19
+Pago --> UC20
+Pago --> UC21
+
+UC4 ..> UC8 : <<include>>
+UC8 ..> UC19 : <<include>>
+UC13 ..> UC14 : <<extend>>
+
+@enduml

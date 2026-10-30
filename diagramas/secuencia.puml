@@ -1,0 +1,54 @@
+@startuml
+skinparam sequenceArrowColor #0369a1
+skinparam sequenceLifeLineBorderColor #0369a1
+skinparam sequenceParticipantBackgroundColor #f0f9ff
+skinparam sequenceParticipantBorderColor #0369a1
+
+title Diagrama de Secuencia - Reserva y Pago de Consulta (RF1 + RF4)
+
+actor Paciente
+participant "API Gateway" as API
+participant "Patient Service" as PS
+participant "Booking Service" as BS
+participant "Billing Module" as BM
+participant "Pasarela Pago" as PP
+participant "Médico" as Medico
+
+Paciente -> API: Buscar profesional por especialidad
+API -> PS: GET /medicos?especialidad=CARDIO
+PS -> BS: Validar disponibilidad
+BS --> PS: Lista de médicos disponibles
+PS --> API: Respuesta JSON
+API --> Paciente: Lista de profesionales
+
+Paciente -> API: Filtrar por disponibilidad
+API -> PS: GET /citas?medico=123&fecha=2026-11-01
+PS -> BS: Verificar horarios libres
+BS --> PS: Horarios disponibles
+PS --> API: Respuesta JSON
+API --> Paciente: Horarios disponibles
+
+Paciente -> API: Confirmar reserva
+API -> PS: POST /citas {medicoId, fechaHora, pacienteId}
+PS -> BS: Crear cita (estado: PENDIENTE)
+BS --> PS: Cita creada (citaId)
+PS -> BM: Crear pago asociado
+BM --> PS: Pago creado (pagoId)
+PS --> API: Cita confirmada
+API --> Paciente: Confirmación de cita
+
+Paciente -> API: Realizar pago
+API -> BM: POST /pagos {citaId, monto, metodo}
+BM -> PP: POST /transacciones {monto, moneda}
+PP --> BM: Token de transacción
+BM --> API: URL de pago
+API --> Paciente: Redirigir a pasarela
+
+PP --> BM: Webhook confirmación
+BM -> BM: Actualizar estado pago (COMPROBADO)
+BM -> PS: Notificar pago exitoso
+PS -> PS: Actualizar cita (CONFIRMADA)
+PS -> Medico: Notificación nueva cita
+PS --> Paciente: Comprobante digital (PDF + QR)
+
+@enduml

@@ -1,0 +1,80 @@
+@startuml
+skinparam componentBackgroundColor #f0f9ff
+skinparam componentBorderColor #0369a1
+skinparam componentArrowColor #0369a1
+skinparam componentFontStyle bold
+
+title Diagrama de Componentes - MediConnect
+
+package "API Gateway" {
+  [Request Router]
+  [Rate Limiter]
+  [Auth Middleware]
+}
+
+package "Auth Service" {
+  [JWT Service]
+  [User Repository]
+  [Role Manager]
+}
+
+package "Patient Service" {
+  [Booking Service]
+  [Availability Checker]
+  [Notification Service]
+}
+
+package "Medical Service" {
+  [Clinical History Service]
+  [Prescription Service]
+  [Diagnosis Service]
+}
+
+package "Billing Module" {
+  [Payment Gateway Adapter]
+  [Invoice Generator]
+  [Tax Calculator]
+}
+
+package "Teleconsultation Module" {
+  [Signaling Server]
+  [Media Router]
+  [Recording Service]
+}
+
+package "Frontend" {
+  [Paciente UI]
+  [Medico UI]
+  [Admin UI]
+}
+
+package "Database" {
+  [PostgreSQL Primary]
+  [PostgreSQL Replica]
+  [Redis Cache]
+  [MinIO Storage]
+}
+
+package "External Integrations" {
+  [Stripe API]
+  [HCN API]
+  [Notification Services]
+}
+
+[Request Router] --> [JWT Service]
+[Request Router] --> [Booking Service]
+[Request Router] --> [Clinical History Service]
+[Request Router] --> [Payment Gateway Adapter]
+[Request Router] --> [Signaling Server]
+
+[Booking Service] --> [PostgreSQL Primary]
+[Booking Service] --> [Redis Cache]
+[Clinical History Service] --> [PostgreSQL Primary]
+[Payment Gateway Adapter] --> [Stripe API]
+[Signaling Server] --> [Media Router]
+
+[Paciente UI] --> [Request Router]
+[Medico UI] --> [Request Router]
+[Admin UI] --> [Request Router]
+
+@enduml
