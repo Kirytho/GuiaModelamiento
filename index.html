@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediConnect — Documentación 4+1 UML</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap');
+body{font-family:'Inter',system-ui,sans-serif;}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+.gradient-brand{background:linear-gradient(135deg,#0f766e 0%,#134e4a 100%);}
+.card-hover{transition:transform .15s ease,box-shadow .15s ease;}
+.card-hover:hover{transform:translateY(-3px);box-shadow:0 10px 25px -5px rgba(15,118,110,.15);}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 leading-relaxed">
+
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a href="#inicio" class="font-extrabold text-xl tracking-tight text-teal-800">MediConnect <span class="text-teal-500 text-base font-semibold">4+1</span></a>
+    <div class="hidden md:flex gap-6 text-sm font-semibold text-slate-600">
+      <a href="#inicio" class="hover:text-teal-700">Inicio</a>
+      <a href="#requerimientos" class="hover:text-teal-700">Requerimientos</a>
+      <a href="#vistas" class="hover:text-teal-700">Vistas 4+1</a>
+      <a href="#conclusiones" class="hover:text-teal-700">Conclusiones</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 1. INICIO -->
+<section id="inicio" class="gradient-brand text-white">
+  <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+    <div class="max-w-3xl">
+      <p class="uppercase tracking-widest text-teal-200 text-sm font-bold mb-4">Documentación Pública — Arquitectura de Software</p>
+      <h1 class="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6">MediConnect</h1>
+      <p class="text-xl md:text-2xl text-teal-50 mb-8">Plataforma de salud integral basada en el paradigma <strong>4+1 UML</strong> de Kruchten. Integración de atención presencial, telemedicina y gestión clínica.</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#requerimientos" class="bg-white text-teal-900 px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition">Requerimientos</a>
+        <a href="#vistas" class="bg-teal-700/60 text-white border border-teal-400/40 px-6 py-3 rounded-full font-bold hover:bg-teal-700 transition">Vistas 4+1</a>
+        <a href="#conclusiones" class="bg-teal-700/60 text-white border border-teal-400/40 px-6 py-3 rounded-full font-bold hover:bg-teal-700 transition">Conclusiones</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="grid md:grid-cols-2 gap-10 items-start">
+      <div class="bg-white/10 backdrop-blur rounded-2xl p-8 border border-white/10">
+        <h2 class="text-2xl font-bold mb-4">Presentación del Proyecto</h2>
+        <p class="text-teal-50 mb-4">MediConnect es un sistema de salud digital que conecta pacientes, médicos y administradores mediante citas, historiales clínicos, videoconferencias y facturación electrónica. Este sitio documenta su arquitectura siguiendo estrictamente el paradigma <strong>4+1 UML</strong> con diagramas descriptivos, interpretaciones técnicas y trade-offs adoptados.</p>
+        <ul class="text-teal-100 list-disc pl-5 space-y-1 text-sm">
+          <li>Arquitectura basada en dominios: Paciente, Médico, Cita, Historial, Pago, Teleconsulta.</li>
+          <li>Infraestructura cloud-native con despliegue contenerizado.</li>
+          <li>Seguridad: TLS 1.3, AES-256, JWT, OAuth2.</li>
+          <li>Disponibilidad objetivo: 99.9% en horario hábil.</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 backdrop-blur rounded-2xl p-8 border border-white/10">
+        <h2 class="text-2xl font-bold mb-4">Integrantes del Equipo</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white/10 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-teal-300 text-teal-900 mx-auto mb-2 flex items-center justify-center font-extrabold text-lg">A1</div>
+            <h3 class="font-bold">Alumno 1</h3><p class="text-xs text-teal-100">Arquitecto de Software</p>
+          </div>
+          <div class="bg-white/10 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-teal-300 text-teal-900 mx-auto mb-2 flex items-center justify-center font-extrabold text-lg">A2</div>
+            <h3 class="font-bold">Alumno 2</h3><p class="text-xs text-teal-100">Backend / API</p>
+          </div>
+          <div class="bg-white/10 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-teal-300 text-teal-900 mx-auto mb-2 flex items-center justify-center font-extrabold text-lg">A3</div>
+            <h3 class="font-bold">Alumno 3</h3><p class="text-xs text-teal-100">Diseñador UML</p>
+          </div>
+          <div class="bg-white/10 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-teal-300 text-teal-900 mx-auto mb-2 flex items-center justify-center font-extrabold text-lg">A4</div>
+            <h3 class="font-bold">Alumno 4</h3><p class="text-xs text-teal-100">DevOps / Cloud</p>
+          </div>
+        </div>
+        <div class="mt-6 text-center">
+          <a href="https://github.com/mediconnect-4plus1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-white text-teal-900 px-5 py-2.5 rounded-full font-bold shadow hover:scale-105 transition">
+            <i class="fab fa-github text-xl"></i> Repositorio GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. REQUERIMIENTOS -->
+<section id="requerimientos" class="max-w-6xl mx-auto px-6 py-20">
+  <div class="text-center mb-12">
+    <h2 class="text-4xl font-extrabold text-slate-900">Requerimientos del Sistema</h2>
+    <p class="text-slate-500 mt-2">Matriz RF1-RF4 y RNF1-RNF2 con prioridad y complejidad.</p>
+  </div>
+
+  <div class="mb-14">
+    <h3 class="text-2xl font-extrabold text-red-700 mb-6 flex items-center gap-3"><i class="fas fa-list-check"></i> Requerimientos Funcionales (RF)</h3>
+    <div class="overflow-x-auto rounded-2xl shadow ring-1 ring-slate-200">
+      <table class="w-full text-sm bg-white">
+        <thead class="bg-red-700 text-white">
+          <tr>
+            <th class="text-left px-5 py-3 font-bold">ID</th>
+            <th class="text-left px-5 py-3 font-bold">Requerimiento</th>
+            <th class="text-left px-5 py-3 font-bold">Prioridad</th>
+            <th class="text-left px-5 py-3 font-bold">Complejidad</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="bg-white"><td class="px-5 py-4 font-extrabold text-red-700">RF1</td><td class="px-5 py-4">Gestión y Agendamiento de Citas</td><td class="px-5 py-4"><span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold text-xs">Alta</span></td><td class="px-5 py-4">Media</td></tr>
+          <tr class="bg-slate-50"><td class="px-5 py-4 font-extrabold text-red-700">RF2</td><td class="px-5 py-4">Registro de Historial Clínico</td><td class="px-5 py-4"><span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold text-xs">Alta</span></td><td class="px-5 py-4">Alta</td></tr>
+          <tr class="bg-white"><td class="px-5 py-4 font-extrabold text-red-700">RF3</td><td class="px-5 py-4">Módulo de Videoconferencia Médica</td><td class="px-5 py-4"><span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold text-xs">Alta</span></td><td class="px-5 py-4">Alta</td></tr>
+          <tr class="bg-slate-50"><td class="px-5 py-4 font-extrabold text-red-700">RF4</td><td class="px-5 py-4">Procesamiento de Pagos y Facturación</td><td class="px-5 py-4"><span class="inline-block bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold text-xs">Media</span></td><td class="px-5 py-4">Media</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4 mt-6">
+      <div class="bg-red-50 border border-red-100 rounded-xl p-5">
+        <h4 class="font-extrabold text-red-700 mb-1">RF1 — Gestión de Citas</h4>
+        <p class="text-sm text-slate-700">El paciente busca profesionales por especialidad, filtra disponibilidad horaria y confirma reservas. El médico recibe confirmaciones y gestiona su agenda.</p>
+      </div>
+      <div class="bg-red-50 border border-red-100 rounded-xl p-5">
+        <h4 class="font-extrabold text-red-700 mb-1">RF2 — Historial Clínico</h4>
+        <p class="text-sm text-slate-700">El médico consulta y actualiza fichas médicas, registra diagnósticos y emite recetas digitales con trazabilidad completa.</p>
+      </div>
+      <div class="bg-red-50 border border-red-100 rounded-xl p-5">
+        <h4 class="font-extrabold text-red-700 mb-1">RF3 — Videoconferencia</h4>
+        <p class="text-sm text-slate-700">Teleconsultas en tiempo real con audio y vídeo de alta calidad, integradas directamente desde la ficha del paciente.</p>
+      </div>
+      <div class="bg-red-50 border border-red-100 rounded-xl p-5">
+        <h4 class="font-extrabold text-red-700 mb-1">RF4 — Pagos y Facturación</h4>
+        <p class="text-sm text-slate-700">Procesamiento de transacciones mediante pasarela de pago, generación de comprobantes digitales y conciliación bancaria.</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="text-2xl font-extrabold text-emerald-700 mb-6 flex items-center gap-3"><i class="fas fa-shield-halved"></i> Requerimientos No Funcionales (RNF)</h3>
+    <div class="overflow-x-auto rounded-2xl shadow ring-1 ring-slate-200">
+      <table class="w-full text-sm bg-white">
+        <thead class="bg-emerald-700 text-white">
+          <tr><th class="text-left px-5 py-3 font-bold">ID</th><th class="text-left px-5 py-3 font-bold">Requerimiento</th><th class="text-left px-5 py-3 font-bold">Prioridad</th><th class="text-left px-5 py-3 font-bold">Complejidad</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="bg-white"><td class="px-5 py-4 font-extrabold text-emerald-700">RNF1</td><td class="px-5 py-4">Alta Disponibilidad Operativa (99.9%)</td><td class="px-5 py-4"><span class="inline-block bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold text-xs">Alta</span></td><td class="px-5 py-4">Alta</td></tr>
+          <tr class="bg-slate-50"><td class="px-5 py-4 font-extrabold text-emerald-700">RNF2</td><td class="px-5 py-4">Seguridad y Confidencialidad de Datos</td><td class="px-5 py-4"><span class="inline-block bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold text-xs">Alta</span></td><td class="px-5 py-4">Media</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4 mt-6">
+      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5">
+        <h4 class="font-extrabold text-emerald-700 mb-1">RNF1 — Alta Disponibilidad</h4>
+        <p class="text-sm text-slate-700">Uptime del 99.9% durante horario hábil. Arquitectura con failover automático, balanceo de carga y redundancia de servicios críticos.</p>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5">
+        <h4 class="font-extrabold text-emerald-700 mb-1">RNF2 — Seguridad</h4>
+        <p class="text-sm text-slate-700">TLS 1.3 para tránsito, AES-256 para reposo. Cumple normativas sanitarias y protección de datos personales (HIPAA / GDPR).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. VISTAS 4+1 -->
+<section id="vistas" class="bg-slate-100 border-y border-slate-200 py-20">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <h2 class="text-4xl font-extrabold text-slate-900">Vistas 4+1 del Paradigma</h2>
+      <p class="text-slate-500 mt-2">Cada vista incluye diagrama UML en formato texto descriptivo e interpretación técnica.</p>
+    </div>
+
+    <!-- Vista Lógica -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 mb-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA LÓGICA</span>
+        <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Clases — Modelo de Dominio</h3>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
+          <p class="text-slate-600 mb-4">El núcleo del sistema se modela con clases de dominio puras: <strong>Paciente</strong>, <strong>Médico</strong>, <strong>Cita</strong>, <strong>HistorialClínico</strong>, <strong>Receta</strong>, <strong>Pago</strong>. Cada entidad define atributos tipados y métodos de negocio, manteniendo independencia de infraestructura.</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li><strong>Paciente</strong> tiene muchas <strong>Cita</strong> (1:N).</li>
+            <li><strong>Médico</strong> emite <strong>Receta</strong> y actualiza <strong>HistorialClínico</strong>.</li>
+            <li><strong>Cita</strong> genera <strong>Pago</strong> tras confirmación.</li>
+          </ul>
+        </div>
+        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
+          <pre class="mono text-sm leading-6 whitespace-pre-wrap">┌──────────────────────────────────────────────┐
+│              PACIENTE (Domain)               │
+├──────────────────────────────────────────────┤
+│ - pacienteId : UUID                          │
+│ - nombre : String                            │
+│ - email : String                             │
+│ - telefono : String                          │
+│ - fechaNacimiento : DateTime                 │
+├──────────────────────────────────────────────┤
+│ + reservarCita() : Cita                      │
+│ + pagarConsulta() : Pago                     │
+│ + consultarHistorial() : HistorialClínico    │
+└──────────────────────────────────────────────┘
+              │ 1
+              │ tiene muchos
+              ▼
+┌──────────────────────────────────────────────┐
+│                 CITA                         │
+├──────────────────────────────────────────────┤
+│ - citaId : UUID                              │
+│ - fechaHora : DateTime                       │
+│ - estado : Enum {PENDIENTE,CONFIRMADA,CANCELADA}
+│ - pacienteId : UUID                          │
+│ - medicoId : UUID                            │
+├──────────────────────────────────────────────┤
+│ + confirmar() : void                         │
+│ + cancelar() : void                          │
+└──────────────────────────────────────────────┘
+              │ 1
+              │ genera
+              ▼
+┌──────────────────────────────────────────────┐
+│                 PAGO                         │
+├──────────────────────────────────────────────┤
+│ - pagoId : UUID                              │
+│ - monto : Decimal                            │
+│ - estado : Enum {PENDIENTE,COMPLETADO}       │
+│ - transaccionRef : String                    │
+├──────────────────────────────────────────────┤
+│ + procesar() : void                          │
+│ + emitirComprobante() : Documento            │
+└──────────────────────────────────────────────┘</pre>
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista de Desarrollo -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 mb-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA DESARROLLO</span>
+        <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Componentes — Modularidad</h3>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
+          <p class="text-slate-600 mb-4">El código se organiza en componentes contenerizados. <strong>API Gateway</strong> expone endpoints REST y enruta a servicios internos. Cada dominio opera como servicio independiente con su propia base, permitiendo despliegue independiente.</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li>Auth Service: JWT / OAuth2.</li>
+            <li>Patient Service: citas y disponibilidad.</li>
+            <li>Medical Service: historiales y recetas.</li>
+            <li>Billing Module: pasarela de pagos.</li>
+            <li>Teleconsult Module: videoconferencia.</li>
+          </ul>
+        </div>
+        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
+          <pre class="mono text-sm leading-6 whitespace-pre-wrap">┌──────────────────────────────────────────────┐
+│            API GATEWAY (NGINX)               │
+│  /api/v1/pacientes | /api/v1/medicos          │
+│  /api/v1/citas     | /api/v1/pagos           │
+│  /api/v1/teleconsultas                       │
+└──────────────────────────────────────────────┘
+           │
+     ┌─────┼─────┬─────┐
+     ▼     ▼     ▼     ▼
+┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+│ AUTH   │ │PATIENT │ │MEDICAL │ │BILLING │
+│(Docker)│ │(Docker)│ │(Docker)│ │(Docker)│
+│JWT,OAu2│ │Cita Mgmt│ │Historial│ │Payme   │
+└────────┘ └────────┘ └────────┘ └────────┘
+           │
+           ▼
+┌──────────────────────────────────────────────┐
+│         TELECONSULT MODULE (Docker)          │
+│  WebRTC / SFU | Graba sesiones               │
+└──────────────────────────────────────────────┘</pre>
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista de Procesos -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 mb-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA PROCESOS</span>
+        <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Secuencia — Reserva y Pago</h3>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
+          <p class="text-slate-600 mb-4">El flujo cubre RF1 (reserva de cita) y RF4 (pago). El paciente interactúa con API Gateway, que delega al Patient Service. La confirmación dispara la creación de un registro de pago que se envía al Billing Module y luego a la pasarela externa. Todo se registra con trazabilidad.</p>
+        </div>
+        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
+          <pre class="mono text-sm leading-6 whitespace-pre-wrap">Paciente ──► API Gateway ──► Patient Service
+   │              │                │
+   │  Buscar     │                │
+   │─────────────▶│                │
+   │              │ Buscar Médico │
+   │              │──────────────▶│
+   │              │◀──────────────│ Filtra Disp.
+   │  Reserva    │                │
+   │─────────────▶│────────────────▶│
+   │              │ Guardar Cita  │
+   │              │                │ Crear Pago
+   │              │                │────────────▶ Billing
+   │              │                │               │
+   │              │                │               │ POST /tx
+   │              │                │               │────────────▶ Pasarela
+   │              │                │               │             │
+   │              │                │               │ Procesar   │
+   │              │                │◀──────────────│◀────────────│
+   │              │                │  Respuesta    │             │
+   │  Confirmado │◀───────────────│◀───────────────│             │</pre>
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista Física -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 mb-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA FÍSICA</span>
+        <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900">Diagrama de Despliegue — Topología</h3>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
+          <p class="text-slate-600 mb-4">La infraestructura es cloud-native. <strong>Cloudflare CDN</strong> protege y acelera el tráfico. Un load balancer <strong>NGINX</strong> distribuye a servidores activos con sticky JWT. La base de datos PostgreSQL opera con réplica asíncrona y Redis gestiona sesiones y caché. Archivos médicos se almacenan en S3.</p>
+          <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1">
+            <li>Servicio activo / standby para alta disponibilidad.</li>
+            <li>PostgreSQL Primary + Réplica ASYNC.</li>
+            <li>Redis para sesiones y rate limiting.</li>
+          </ul>
+        </div>
+        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
+          <pre class="mono text-sm leading-6 whitespace-pre-wrap">Internet ──► Cloudflare CDN ──► Load Balancer (NGINX)
+                                        │
+                                Round-robin + Sticky JWT
+                                        ▼
+                         ┌─────────┬─────────┬─────────┐
+                         │  Srv1  │  Srv2  │  Snk  │
+                         │ Active │ Active │ Standby│
+                         └─────────┴─────────┴─────────┘
+                                        │
+                                        ▼
+                         ┌──────────────────────────────┐
+                         │      DATABASE LAYER           │
+                         │                              │
+                         │ PostgreSQL Primary (Master)   │
+                         │      │                       │
+                         │      ▼                       │
+                         │ Réplica ASYNC                 │
+                         │ Redis Cache (Sessions)        │
+                         │ S3 Storage (Recetas / PDF)    │
+                         └──────────────────────────────┘</pre>
+        </div>
+      </div>
+    </article>
+
+    <!-- Vista de Escenarios (4+1 +1) -->
+    <article class="bg-white rounded-3xl shadow-lg ring-1 ring-slate-200 p-8 md:p-10 mb-10 card-hover">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-extrabold">VISTA ESCENARIOS</span>
+        <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900">Casos de Uso — Escenarios Clave</h3>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h4 class="font-bold text-slate-800 mb-3">Interpretación técnica</h4>
+          <p class="text-slate-600 mb-4">Los escenarios conectan todas las vistas en flujos reales. Un paciente reserva (Vista Lógica + Proceso), el sistema confirma disponibilidad (Desarrollo), despliega el servicio (Física) y el usuario percibe una experiencia coherente (Escenario).</p>
+        </div>
+        <div class="bg-slate-900 text-slate-50 rounded-2xl p-6 overflow-x-auto">
+          <pre class="mono text-sm leading-6 whitespace-pre-wrap">Escenario: Paciente reserva cita with medico Dr. González
+
+Participantes:
+  Paciente        ──►  Busca por especialidad (Cardiología)
+  API Gateway     ──►  Rutas a Patient Service
+  Patient Service ──►  Consulta disponibilidad
+  Médico          ──►  Confirma agenda
+  Cita (Domain)   ──►  Creada, estado = CONFIRMADA
+  Billing         ──►  Genera pago pendiente
+  Paciente        ◀──  Confirmación + Comprobante</pre>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 4. CONCLUSIONES -->
+<section id="conclusiones" class="max-w-6xl mx-auto px-6 py-20">
+  <div class="text-center mb-12">
+    <h2 class="text-4xl font-extrabold text-slate-900">Conclusiones y Trade-offs</h2>
+    <p class="text-slate-500 mt-2">Decisiones arquitectónicas adoptadas y sus implicaciones.</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6 mb-14">
+    <div class="bg-white rounded-2xl p-8 shadow ring-1 ring-slate-200 border-l-4 border-teal-600 card-hover">
+      <h3 class="text-xl font-extrabold text-teal-700 mb-3"><i class="fas fa-cube mr-2"></i> Arquitectura Hexágona (Ports & Adapters)</h3>
+      <p class="text-slate-600 mb-3">Separación clara entre dominio, aplicación e interfaces. Faculta testing independiente y cambios de tecnología sin afectar el núcleo.</p>
+      <ul class="text-sm text-slate-600 space-y-1 list-disc pl-5">
+        <li>Testing unitario sin base de datos.</li>
+        <li>Cambio de proveedor de pagos sin tocar dominio.</li>
+        <li>Principio de inversión de dependencias cumplido.</li>
+      </ul>
+    </div>
+    <div class="bg-white rounded-2xl p-8 shadow ring-1 ring-slate-200 border-l-4 border-indigo-600 card-hover">
+      <h3 class="text-xl font-extrabold text-indigo-700 mb-3"><i class="fas fa-server mr-2"></i> Microservicios vs Monolito</h3>
+      <p class="text-slate-600 mb-3">Elegimos microservicios por escalabilidad independiente por dominio (citas vs pagos vs historial).</p>
+      <ul class="text-sm text-slate-600 space-y-1 list-disc pl-5">
+        <li>Deploy independiente: menor riesgo de regresión.</li>
+        <li>Complejidad de red y consistencia eventual aceptada.</li>
+        <li>Requiere observabilidad fuerte (logs, trazas).</li>
+      </ul>
+    </div>
+    <div class="bg-white rounded-2xl p-8 shadow ring-1 ring-slate-200 border-l-4 border-amber-500 card-hover">
+      <h3 class="text-xl font-extrabold text-amber-700 mb-3"><i class="fas fa-clock-rotate-left mr-2"></i> Consistencia Eventual vs ACID</h3>
+      <p class="text-slate-600 mb-3">Historial clínico tolera lag de segundos (eventos). Casos críticos (pagos, recetas) usan transacciones ACID.</p>
+      <ul class="text-sm text-slate-600 space-y-1 list-disc pl-5">
+        <li>Eventos de dominio sincronizan duplicados.</li>
+        <li>Riesgo: datos inconsistentes temporalmente.</li>
+      </ul>
+    </div>
+    <div class="bg-white rounded-2xl p-8 shadow ring-1 ring-slate-200 border-l-4 border-rose-600 card-hover">
+      <h3 class="text-xl font-extrabold text-rose-700 mb-3"><i class="fas fa-database mr-2"></i> Duplicación vs Normalización</h3>
+      <p class="text-slate-600 mb-3">Datos duplicados en cada microservicio para aislar dominios, evitando locks globales.</p>
+      <ul class="text-sm text-slate-600 space-y-1 list-disc pl-5">
+        <li>Aísla fallas de un servicio.</li>
+        <li>Aumenta complejidad de sincronización.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bg-gradient-to-br from-teal-900 to-teal-700 rounded-3xl p-10 text-white shadow-2xl">
+    <h3 class="text-2xl font-extrabold mb-6">Resumen de Entregables</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white/10 rounded-xl p-5 backdrop-blur">
+        <h4 class="font-bold text-teal-200 mb-2">Inicio</h4>
+        <p class="text-sm text-teal-50">Presentación MediConnect, integrantes y enlace al repositorio público en GitHub.</p>
+      </div>
+      <div class="bg-white/10 rounded-xl p-5 backdrop-blur">
+        <h4 class="font-bold text-teal-200 mb-2">Requerimientos</h4>
+        <p class="text-sm text-teal-50">Matriz completa RF1-RF4 y RNF1-RNF2 con prioridad, complejidad y descripciones.</p>
+      </div>
+      <div class="bg-white/10 rounded-xl p-5 backdrop-blur">
+        <h4 class="font-bold text-teal-200 mb-2">Vistas 4+1</h4>
+        <p class="text-sm text-teal-50">Lógica (Clases), Desarrollo (Componentes), Procesos (Secuencia), Física (Despliegue) y Escenarios.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-300 py-10">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div>
+      <h4 class="font-extrabold text-white text-lg">MediConnect — 4+1 UML</h4>
+      <p class="text-sm text-slate-400">Documentación pública estática. HTML5 + Tailwind CSS (CDN). Sin backend.</p>
+    </div>
+    <a href="https://github.com/mediconnect-4plus1" target="_blank" rel="noopener noreferrer" class="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2.5 rounded-full font-bold shadow transition">Ver repositorio en GitHub</a>
+  </div>
+  <div class="max-w-6xl mx-auto px-6 mt-6 text-xs text-slate-500">Entregado en /home/fer/.local/share/equipo/trabajo/GuiaModelamiento/or-inkling-xs/entregas/sitio_web/ — Tarea 405ed.</div>
+</footer>
+
+<!-- DOCUMENTACION DE ENTREGA -->
+REQUISITOS: S1
+PENDIENTES:
+FIN-405ed
+
+</body>
+</html>

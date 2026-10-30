@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vistas 4+1 - MediConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold">MediConnect</h1>
+            <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold hover:scale-105 transition">
+                <i class="fas fa-arrow-left mr-2"></i>Volver al Inicio
+            </a>
+        </div>
+    </header>
+
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">Vistas 4+1 del Paradigma de Kruchten</h2>
+            
+            <div class="grid md:grid-cols-6 gap-4 mb-16">
+                <div class="text-center p-4 bg-red-100 rounded-xl shadow">
+                    <i class="fas fa-bullseye text-2xl text-red-600 mb-2"></i>
+                    <h4 class="font-bold">Toma Requerimientos</h4>
+                </div>
+                <div class="text-center p-4 bg-blue-100 rounded-xl shadow">
+                    <i class="fas fa-sitemap text-2xl text-blue-600 mb-2"></i>
+                    <h4 class="font-bold">Vista Lógica</h4>
+                </div>
+                <div class="text-center p-4 bg-green-100 rounded-xl shadow">
+                    <i class="fas fa-layer-group text-2xl text-green-600 mb-2"></i>
+                    <h4 class="font-bold">Vista Desarrollo</h4>
+                </div>
+                <div class="text-center p-4 bg-yellow-100 rounded-xl shadow">
+                    <i class="fas fa-sync-alt text-2xl text-yellow-600 mb-2"></i>
+                    <h4 class="font-bold">Vista Procesos</h4>
+                </div>
+                <div class="text-center p-4 bg-purple-100 rounded-xl shadow">
+                    <i class="fas fa-server text-2xl text-purple-600 mb-2"></i>
+                    <h4 class="font-bold">Vista Física</h4>
+                </div>
+                <div class="text-center p-4 bg-orange-100 rounded-xl shadow">
+                    <i class="fas fa-user-friends text-2xl text-orange-600 mb-2"></i>
+                    <h4 class="font-bold">+ Vista Escenarios</h4>
+                </div>
+            </div>
+
+            <!-- Vista Lógica -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-blue-600 flex items-center">
+                    <i class="fas fa-sitemap mr-3"></i>Vista Lógica - Diagrama de Clases
+                </h3>
+                <div class="card-shadow bg-white rounded-xl p-6">
+                    <p class="text-gray-700 mb-4">
+                        Estructura de dominio que modela el núcleo del sistema. Define las entidades, atributos, 
+                        métodos y relaciones entre objetos.
+                    </p>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+┌─────────────────────────────────────────────────────────────────┐
+│                              PACIENTE                            │
+├─────────────────────────────────────────────────────────────────┤
+│ - pacienteId: UUID                                              │
+│ - nombre: String                                                │
+│ - apellido: String                                              │
+│ - email: String                                                 │
+│ - telefono: String                                              │
+│ - fechaNacimiento: DateTime                                     │
+├─────────────────────────────────────────────────────────────────┤
+│ + reservarCita(): Cita                                        │
+│ + pagarConsulta(): Pago                                        │
+└─────────────────────────────────────────────────────────────────┘
+                                 │ 1
+                                 │ tiene muchos
+                                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         HISTORIAL CLÍNICO                      │
+├─────────────────────────────────────────────────────────────────┤
+│ - historialId: UUID                                             │
+│ - pacienteId: UUID                                            │
+│ - medicoId: UUID                                              │
+│ - diagnosticos: List<Diagnostico>                             │
+│ - recetas: List<Receta>                                       │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                             CITA                                │
+├─────────────────────────────────────────────────────────────────┤
+│ - citaId: UUID                                                │
+│ - pacienteId: UUID                                            │
+│ - medicoId: UUID                                              │
+│ - fechaHora: DateTime                                         │
+│ - estado: Enum [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA]  │
+├─────────────────────────────────────────────────────────────────┤
+│ + confirmar(): void                                           │
+│ + cancelar(): void                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                            PAGO                                │
+├─────────────────────────────────────────────────────────────────┤
+│ - pagoId: UUID                                                │
+│ - citaId: UUID                                                │
+│ - monto: Decimal                                              │
+│ - estado: Enum [PENDIENTE, COMPROBADO, RECHAZADO]            │
+│ - numeroTransaccion: String                                   │
+└─────────────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Vista de Desarrollo -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-green-600 flex items-center">
+                    <i class="fas fa-layer-group mr-3"></i>Vista de Desarrollo - Diagrama de Componentes
+                </h3>
+                <div class="card-shadow bg-white rounded-xl p-6">
+                    <p class="text-gray-700 mb-4">
+                        Organización modular del código fuente. Agrupa componentes, subsistemas y sus dependencias.
+                    </p>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+┌─────────────────────────────────────────────────────────────────┐
+│                            API GATEWAY                           │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  /api/v1/pacientes  /api/v1/medicos  /api/v1/citas    │  │
+│  │  /api/v1/pagos      /api/v1/teleconsultas              │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+                                   │
+           ┌───────────────────────┼───────────────────────┐
+           ▼                       ▼                       ▼
+┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│   AUTH SERVICE  │   │ PATIENT SERVICE │   │ MEDICAL SERVICE │
+│  (Docker)       │   │  (Docker)       │   │  (Docker)       │
+│ - JWT Auth       │   │ - Cita Mgmt     │   │ - Historial     │
+│ - Oauth2         │   │ - Disponibilidad│   │ - Diagnostico   │
+│ - User Mgmt      │   │ - Booking       │   │ - Recetas       │
+└─────────────────┘   └─────────────────┘   └─────────────────┘
+           │                       │                       │
+           └───────────────────────┼───────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────┐   ┌─────────────────┐
+│ BILLING MODULE  │   │ TELECONSULT MOD │
+│ (Docker)        │   │  (Docker)       │
+│ - Pago Process  │   │ - WebRTC        │
+│ - Facturas      │   │ - Signaling     │
+│ - Refunds       │   │ - Quality       │
+└─────────────────┘   └─────────────────┘
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Vista de Procesos -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-yellow-600 flex items-center">
+                    <i class="fas fa-sync-alt mr-3"></i>Vista de Procesos - Diagrama de Secuencia
+                </h3>
+                <div class="card-shadow bg-white rounded-xl p-6">
+                    <p class="text-gray-700 mb-4">
+                        Flujos dinámicos que ilustran el comportamiento del sistema. Muestra intercambios de mensajes, 
+                        concurrencia y pasos temporales.
+                    </p>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+Proceso: Reserva y Pago de Consulta (RF1 + RF4)
+
+Paciente ──► API Gateway ──► Patient Service
+   │              │                │
+   │ Busca Medico │                │
+   │─────────────▶│                │
+   │              │ Busca Medico   │
+   │              │────────────────▶│
+   │              │                │ Filtra Disp.
+   │              │◀────────────────│
+   │ Reserva      │                │
+   │─────────────▶│────────────────▶│
+   │              │ Guardar Cita   │
+   │              │                │ Crear Pago
+   │              │                │──────────────▶ Billing Module
+   │              │                │                │
+   │              │                │                │ POST /transaccion
+   │              │                │                │──────────────────▶ Pasarela de Pago
+   │              │                │                │                │
+   │              │                │                │ Procesar       │
+   │              │                │                │◀───────────────│
+   │              │                │                │ Respuesta      │
+   │              │                │◀───────────────│
+   │              │ Guardar Pago   │
+   │              │◀────────────────│
+   │ Comprobante  │                │
+   │◀─────────────│                │
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Vista Física -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-purple-600 flex items-center">
+                    <i class="fas fa-server mr-3"></i>Vista Física - Diagrama de Despliegue
+                </h3>
+                <div class="card-shadow bg-white rounded-xl p-6">
+                    <p class="text-gray-700 mb-4">
+                        Topología física de infraestructura. Muestra servidores, redes, nodos de base de datos, 
+                        y conexiones seguras.
+                    </p>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+Internet ──► Cloudflare CDN ──► Load Balancer (NGINX)
+                                              │
+                                   Round-robin + Sticky JWT
+                                              ▼
+                         ┌─────────┬─────────┬─────────┐
+                         │   Srv1  │   Srv2  │   Snk   │
+                         │  Active │  Active │ Standby │
+                         │  Web App│  Web App│  Web App│
+                         └─────────┴─────────┴─────────┘
+                                   │
+                                   ▼
+                    ┌──────────────────────────────┐
+                    │     DATABASE LAYER           │
+                    │                              │
+                    │  PostgreSQL  ◄── Replica ASYNC
+                    │  Primary (Master)              │
+                    │                              │
+                    │  Redis Cache (Sessions)      │
+                    │                              │
+                    │  S3 Storage (Recetas)        │
+                    └──────────────────────────────┘
+                                   │
+                                   ▼
+                    ┌──────────────────────────────┐
+                    │   EXTERNAL INTEGRATIONS      │
+                    │                              │
+                    │  Stripe API (Pagos)          │
+                    │  HCN API (Historial)         │
+                    │  Twilio (Notificaciones)     │
+                    └──────────────────────────────┘
+
+Conexiones: HTTPS/TLS 1.3, AES-256 en reposo, VPC isolada
+Disponibilidad: 99.9% uptime (Multi-AZ)
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">&copy; 2026 MediConnect - Arquitectura 4+1 UML</p>
+        </div>
+    </footer>
+</body>
+</html>
