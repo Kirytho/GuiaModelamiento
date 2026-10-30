@@ -13,6 +13,18 @@
         .card-shadow {
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
         }
+        .diagram-container {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -65,58 +77,14 @@
                 <div class="card-shadow bg-white rounded-xl p-6">
                     <p class="text-gray-700 mb-4">
                         Estructura de dominio que modela el núcleo del sistema. Define las entidades, atributos, 
-                        métodos y relaciones entre objetos.
+                        métodos y relaciones entre objetos. Generado con PlantUML.
                     </p>
-                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
-┌─────────────────────────────────────────────────────────────────┐
-│                              PACIENTE                            │
-├─────────────────────────────────────────────────────────────────┤
-│ - pacienteId: UUID                                              │
-│ - nombre: String                                                │
-│ - apellido: String                                              │
-│ - email: String                                                 │
-│ - telefono: String                                              │
-│ - fechaNacimiento: DateTime                                     │
-├─────────────────────────────────────────────────────────────────┤
-│ + reservarCita(): Cita                                        │
-│ + pagarConsulta(): Pago                                        │
-└─────────────────────────────────────────────────────────────────┘
-                                 │ 1
-                                 │ tiene muchos
-                                 ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                         HISTORIAL CLÍNICO                      │
-├─────────────────────────────────────────────────────────────────┤
-│ - historialId: UUID                                             │
-│ - pacienteId: UUID                                            │
-│ - medicoId: UUID                                              │
-│ - diagnosticos: List<Diagnostico>                             │
-│ - recetas: List<Receta>                                       │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                             CITA                                │
-├─────────────────────────────────────────────────────────────────┤
-│ - citaId: UUID                                                │
-│ - pacienteId: UUID                                            │
-│ - medicoId: UUID                                              │
-│ - fechaHora: DateTime                                         │
-│ - estado: Enum [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA]  │
-├─────────────────────────────────────────────────────────────────┤
-│ + confirmar(): void                                           │
-│ + cancelar(): void                                            │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                            PAGO                                │
-├─────────────────────────────────────────────────────────────────┤
-│ - pagoId: UUID                                                │
-│ - citaId: UUID                                                │
-│ - monto: Decimal                                              │
-│ - estado: Enum [PENDIENTE, COMPROBADO, RECHAZADO]            │
-│ - numeroTransaccion: String                                   │
-└─────────────────────────────────────────────────────────────────┘
-                    </pre>
+                    <div class="diagram-container">
+                        <img src="images/clases.png" alt="Diagrama de Clases UML - MediConnect" loading="lazy">
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4 text-center">
+                        Clases: Usuario, Paciente, Medico, Especialidad, Cita, HistorialClinico, Diagnostico, Receta, MedicamentoRecetado, Pago
+                    </p>
                 </div>
             </div>
 
@@ -127,38 +95,15 @@
                 </h3>
                 <div class="card-shadow bg-white rounded-xl p-6">
                     <p class="text-gray-700 mb-4">
-                        Organización modular del código fuente. Agrupa componentes, subsistemas y sus dependencias.
+                        Organización modular del código fuente. Agrupa componentes, subsistemas y sus dependencias. 
+                        Arquitectura basada en microservicios. Generado con PlantUML.
                     </p>
-                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
-┌─────────────────────────────────────────────────────────────────┐
-│                            API GATEWAY                           │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  /api/v1/pacientes  /api/v1/medicos  /api/v1/citas    │  │
-│  │  /api/v1/pagos      /api/v1/teleconsultas              │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-                                   │
-           ┌───────────────────────┼───────────────────────┐
-           ▼                       ▼                       ▼
-┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
-│   AUTH SERVICE  │   │ PATIENT SERVICE │   │ MEDICAL SERVICE │
-│  (Docker)       │   │  (Docker)       │   │  (Docker)       │
-│ - JWT Auth       │   │ - Cita Mgmt     │   │ - Historial     │
-│ - Oauth2         │   │ - Disponibilidad│   │ - Diagnostico   │
-│ - User Mgmt      │   │ - Booking       │   │ - Recetas       │
-└─────────────────┘   └─────────────────┘   └─────────────────┘
-           │                       │                       │
-           └───────────────────────┼───────────────────────┘
-                                   │
-                                   ▼
-┌─────────────────┐   ┌─────────────────┐
-│ BILLING MODULE  │   │ TELECONSULT MOD │
-│ (Docker)        │   │  (Docker)       │
-│ - Pago Process  │   │ - WebRTC        │
-│ - Facturas      │   │ - Signaling     │
-│ - Refunds       │   │ - Quality       │
-└─────────────────┘   └─────────────────┘
-                    </pre>
+                    <div class="diagram-container">
+                        <img src="images/componentes.png" alt="Diagrama de Componentes UML - MediConnect" loading="lazy">
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4 text-center">
+                        Componentes: API Gateway, Auth Service, Patient Service, Medical Service, Billing Module, Teleconsultation Module, Frontend, Database, External Integrations
+                    </p>
                 </div>
             </div>
 
@@ -170,37 +115,14 @@
                 <div class="card-shadow bg-white rounded-xl p-6">
                     <p class="text-gray-700 mb-4">
                         Flujos dinámicos que ilustran el comportamiento del sistema. Muestra intercambios de mensajes, 
-                        concurrencia y pasos temporales.
+                        concurrencia y pasos temporales. Proceso de Reserva y Pago de Consulta. Generado con PlantUML.
                     </p>
-                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
-Proceso: Reserva y Pago de Consulta (RF1 + RF4)
-
-Paciente ──► API Gateway ──► Patient Service
-   │              │                │
-   │ Busca Medico │                │
-   │─────────────▶│                │
-   │              │ Busca Medico   │
-   │              │────────────────▶│
-   │              │                │ Filtra Disp.
-   │              │◀────────────────│
-   │ Reserva      │                │
-   │─────────────▶│────────────────▶│
-   │              │ Guardar Cita   │
-   │              │                │ Crear Pago
-   │              │                │──────────────▶ Billing Module
-   │              │                │                │
-   │              │                │                │ POST /transaccion
-   │              │                │                │──────────────────▶ Pasarela de Pago
-   │              │                │                │                │
-   │              │                │                │ Procesar       │
-   │              │                │                │◀───────────────│
-   │              │                │                │ Respuesta      │
-   │              │                │◀───────────────│
-   │              │ Guardar Pago   │
-   │              │◀────────────────│
-   │ Comprobante  │                │
-   │◀─────────────│                │
-                    </pre>
+                    <div class="diagram-container">
+                        <img src="images/secuencia.png" alt="Diagrama de Secuencia UML - MediConnect" loading="lazy">
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4 text-center">
+                        Flujo: Paciente → API Gateway → Patient Service → Booking Service → Billing Module → Pasarela de Pago → Médico
+                    </p>
                 </div>
             </div>
 
@@ -212,43 +134,33 @@ Paciente ──► API Gateway ──► Patient Service
                 <div class="card-shadow bg-white rounded-xl p-6">
                     <p class="text-gray-700 mb-4">
                         Topología física de infraestructura. Muestra servidores, redes, nodos de base de datos, 
-                        y conexiones seguras.
+                        y conexiones seguras. Despliegue Cloud-Native. Generado con PlantUML.
                     </p>
-                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
-Internet ──► Cloudflare CDN ──► Load Balancer (NGINX)
-                                              │
-                                   Round-robin + Sticky JWT
-                                              ▼
-                         ┌─────────┬─────────┬─────────┐
-                         │   Srv1  │   Srv2  │   Snk   │
-                         │  Active │  Active │ Standby │
-                         │  Web App│  Web App│  Web App│
-                         └─────────┴─────────┴─────────┘
-                                   │
-                                   ▼
-                    ┌──────────────────────────────┐
-                    │     DATABASE LAYER           │
-                    │                              │
-                    │  PostgreSQL  ◄── Replica ASYNC
-                    │  Primary (Master)              │
-                    │                              │
-                    │  Redis Cache (Sessions)      │
-                    │                              │
-                    │  S3 Storage (Recetas)        │
-                    └──────────────────────────────┘
-                                   │
-                                   ▼
-                    ┌──────────────────────────────┐
-                    │   EXTERNAL INTEGRATIONS      │
-                    │                              │
-                    │  Stripe API (Pagos)          │
-                    │  HCN API (Historial)         │
-                    │  Twilio (Notificaciones)     │
-                    └──────────────────────────────┘
+                    <div class="diagram-container">
+                        <img src="images/despliegue.png" alt="Diagrama de Despliegue UML - MediConnect" loading="lazy">
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4 text-center">
+                        Infraestructura: Cloudflare CDN, NGINX Load Balancer, 3 Web Servers, PostgreSQL Cluster, Redis Cache, MinIO Storage, External Services, Monitoring
+                    </p>
+                </div>
+            </div>
 
-Conexiones: HTTPS/TLS 1.3, AES-256 en reposo, VPC isolada
-Disponibilidad: 99.9% uptime (Multi-AZ)
-                    </pre>
+            <!-- Vista de Escenarios -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-6 text-orange-600 flex items-center">
+                    <i class="fas fa-user-friends mr-3"></i>Vista de Escenarios - Casos de Uso
+                </h3>
+                <div class="card-shadow bg-white rounded-xl p-6">
+                    <p class="text-gray-700 mb-4">
+                        Validación global de la arquitectura mediante casos de uso reales. Actores: Paciente, Médico, 
+                        Sistema de Pago. Generado con PlantUML.
+                    </p>
+                    <div class="diagram-container">
+                        <img src="images/casos_uso.png" alt="Diagrama de Casos de Uso UML - MediConnect" loading="lazy">
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4 text-center">
+                        21 casos de uso: 9 para Paciente, 8 para Médico, 4 para Sistema de Pago
+                    </p>
                 </div>
             </div>
         </div>
